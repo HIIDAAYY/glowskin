@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* Design tokens                                                       */
+/* Exposed to Tailwind v4 via @theme, so `bg-cream`, `text-sage` etc.  */
+/* are generated automatically.                                        */
+/* ------------------------------------------------------------------ */
+@theme {
+  /* Surfaces */
+  --color-cream: #faf6f0;
+  --color-shell: #fdf8f5;
+  --color-blush: #f3e3df;
+  --color-blush-deep: #e7cec8;
+
+  /* Accents */
+  --color-sage: #8a9a86;
+  --color-sage-deep: #5f6f5c;
+  --color-sage-mist: #dce6da;
+  --color-clay: #b98a6e;
+
+  /* Ink */
+  --color-charcoal: #2c3531;
+  --color-charcoal-soft: #56605b;
+
+  /* Typography */
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* Motion */
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    /* Framer Motion drives the section scrolling; native smooth scroll here
+       would fight it, so anchor jumps are handled in `scrollToSection`. */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-charcoal);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Cormorant defaults to old-style figures, which turn "14" into "I4" and
+     "03" into "o3" at display sizes. Force lining figures everywhere the
+     serif is used, and tabular figures for prices so columns stay aligned. */
+  .font-display {
+    font-variant-numeric: lining-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-sage);
+    color: var(--color-cream);
+  }
+
+  /* A hairline sage scrollbar keeps the chrome consistent with the palette. */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-cream);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-sage) 45%, transparent);
+    border-radius: 999px;
+    border: 3px solid var(--color-cream);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-sage);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-sage-deep);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Utilities                                                           */
+/* ------------------------------------------------------------------ */
+@layer utilities {
+  /* Film-grain overlay. Applied to large surfaces to kill the flat,
+     plasticky look that pure CSS gradients otherwise have. */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.28'/%3E%3C/svg%3E");
+  }
+
+  /* Small uppercase label used above every section heading. */
+  .eyebrow {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Hairline divider that fades out at both ends. */
+  .rule-fade {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--color-sage) 40%, transparent),
+      transparent
+    );
+  }
+
+  /* Used by the marquee ticker in the trust bar. */
+  .animate-marquee {
+    animation: marquee 38s linear infinite;
+  }
+
+  .animate-float-slow {
+    animation: float 9s ease-in-out infinite;
+  }
+
+  .animate-float-slower {
+    animation: float 13s ease-in-out infinite;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+/* Respect users who have asked the OS to reduce motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
