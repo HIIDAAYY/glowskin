@@ -113,6 +113,23 @@ so it survives the cursor leaving the component, with `touch-action: none` to
 stop mobile browsers stealing the gesture as a page scroll. Arrow keys nudge the
 divider for keyboard users.
 
+**Social card** — `src/app/opengraph-image.tsx` renders the 1200×630 OG image at
+build time with `next/og`, pulling Cormorant Garamond and Plus Jakarta Sans from
+the same `fonts.gstatic.com` origin `next/font` already uses. If that fetch
+fails the build still succeeds, falling back to Satori's bundled sans.
+
+`metadataBase` is resolved from `NEXT_PUBLIC_SITE_URL`, falling back to
+`VERCEL_URL`, so preview and production deployments get absolute image URLs with
+no configuration. Because the page is statically prerendered, this is baked in at
+**build** time — after pointing a custom domain at the project, set
+`NEXT_PUBLIC_SITE_URL` in the Vercel project and redeploy.
+
+Two Satori limitations worth knowing if you edit that file: every node with more
+than one child needs an explicit `display: flex`, and neither
+`font-variant-numeric` nor `font-feature-settings` is supported — which is why
+the card reads "Dua Minggu" where the page says "14 Hari" (Cormorant's old-style
+figures would otherwise render "14" as "I4").
+
 **Currency formatting** — `formatIDR` formats manually instead of using `Intl`,
 because `Intl`'s non-breaking space differs between server and client and causes
 hydration warnings.
